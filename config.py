@@ -1,0 +1,4 @@
+MYSQL_DATABASE_USER = 'scoutsUser'
+MYSQL_DATABASE_PASSWORD = 'scoutsPass'
+MYSQL_DATABASE_DB = 'scouts'
+MYSQL_DATABASE_HOST = 'localhost'

@@ -14,3 +14,16 @@ CREATE TABLE IF NOT EXISTS `scouts`.`PickupRecord` (
   `dateSubmitted` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`pickupRecordId`))
 ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS `scouts`.`PickupDate` ;
+
+CREATE TABLE IF NOT EXISTS `scouts`.`PickupDate` (
+  `pickupDateId` INT NOT NULL AUTO_INCREMENT,
+  `pickupDate` VARCHAR(20) NOT NULL,
+  `openTime` DATETIME NOT NULL,
+  `closeTime` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`pickupDateId`))
+ENGINE = InnoDB;
+
+INSERT INTO `PickupDate` (`pickupDateId`,`pickupDate`,`openTime`,`closeTime`) VALUES (1,'January 2, 2016',NOW(),'2016-01-01 22:00:00');
+INSERT INTO `PickupDate` (`pickupDateId`,`pickupDate`,`openTime`,`closeTime`) VALUES (2,'January 9, 2016',NOW(),'2016-01-09 22:00:00');

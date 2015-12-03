@@ -19,7 +19,7 @@
 
         <div class="form-group">
             <label for="streetNumberInput">Street Number</label>
-            <input type="number" class="form-control" id="streetNumberInput" name="streetNumber" placeholder="Street Number" required>
+            <input type="text" class="form-control" id="streetNumberInput" name="streetNumber" placeholder="Street Number (and unit if necessary)" required>
         </div>
 
 
@@ -34,8 +34,9 @@
         </div>
 
         <div class="form-group">
-            <label for="neighborhoodSelect">Neighborhood</label>
-            <select class="form-control" id="neighborhoodSelect" name="neighborhood">
+            <label for="neighbourhoodSelect">Neighbourhood</label>
+            <select class="form-control" id="neighbourhoodSelect" name="neighbourhood">
+                <option selected>Neighbourhood</option>
                 <option>Brookside</option>
                 <option>Devon</option>
                 <option>Douglas</option>
@@ -52,18 +53,20 @@
                 <option>Woodstock Rd. Area</option>
                 <option>Other</option>
             </select>
-            <input type="text" name="neighborhoodOther" id="neighborhoodOther" style="display:none;">
+            <input type="text" name="neighbourhoodOther" id="neighbourhoodOther" style="display:none;">
         </div>
 
         <div class="form-group">
             <label for="dateInput">Pickup Date</label>
-            <select class="form-control" id="dateInput" name="pickupDate">
+            <select class="form-control" id="dateInput" name="pickupDate" required>
+                <option selected disabled value="">Pickup Date</option>
             </select>
         </div>
 
         <div class="form-group">
             <label for="paymentInput">Payment Arrangement</label>
-            <select class="form-control" id="paymentInput" name="payment">
+            <select class="form-control" id="paymentInput" name="payment" required>
+                <option selected disabled value="">Payment Arrangement</option>
                 <option>On tree</option>
                 <option>In Mailbox</option>
                 <option>Come to Door</option>
