@@ -1,16 +1,32 @@
-from flask import Flask, request, jsonify, send_file, make_response
+from flask import Flask, request, jsonify, send_file, make_response, render_template
 from flaskext.mysql import MySQL
+from flask_login import LoginManager, login_required
 import pandas as pd
 import MySQLdb
 from io import BytesIO
 from functools import wraps, update_wrapper
 from datetime import datetime
+from models import User
+import os
 
+login_manager = LoginManager()
 mysql = MySQL()
+
 app = Flask(__name__, static_url_path='', static_folder='dist')
 app.config.from_pyfile('config.py')
+app.secret_key = os.urandom(24)
+
 app.debug = True
+
+
 mysql.init_app(app)
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 def nocache(view):
     @wraps(view)
@@ -24,11 +40,19 @@ def nocache(view):
 
     return update_wrapper(no_cache, view)
 
+
+
 @app.route('/')
 def index():
     return app.send_static_file('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    print request.form
+    return app.send_static_file('login.html')
+
 @app.route('/admin/')
+@login_required
 def admin():
     return app.send_static_file('admin/index.html')
 
@@ -79,6 +103,7 @@ def get_pickup_dates():
 
 @app.route('/admin/download', methods=['GET'])
 @nocache
+@login_required
 def get_pickup_records():
     # TODO: Authentication!
     query = ('SELECT * FROM PickupRecord')
