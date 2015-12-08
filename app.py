@@ -47,12 +47,13 @@ def new_record():
     pickup_date = MySQLdb.escape_string(request.form['pickupDate'])
     payment = MySQLdb.escape_string(request.form['payment'])
     other_instructions = MySQLdb.escape_string(request.form['otherInstructions'])
+    email_address = MySQLdb.escape_string(request.form['email'])
 
     query = ("INSERT INTO PickupRecord "
-             "(name, streetNumber, streetName, neighbourhood, phoneNumber, pickupDate, moneyLocation, otherInstructions, dateSubmitted) "
-             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())")
+             "(name, streetNumber, streetName, neighbourhood, phoneNumber, pickupDate, moneyLocation, otherInstructions, emailAddress, dateSubmitted) "
+             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())")
 
-    args = (name, street_number, street_name, neighbourhood, phone, pickup_date, payment, other_instructions)
+    args = (name, street_number, street_name, neighbourhood, phone, pickup_date, payment, other_instructions, email_address)
 
     conn = mysql.connect()
     cursor = conn.cursor()
