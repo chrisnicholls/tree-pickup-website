@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
-    $("#welcomeModal").modal('show');
+    if(document.location.search.indexOf("sourceKey") == -1) {
+        $("#welcomeModal").modal('show');
+    }
 
     $.get("/api/pickupDates", function(data) {
         var select = $("#dateInput")
