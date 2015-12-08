@@ -6,3 +6,26 @@
     margin:0 auto;
     vertical-align: middle;
 }
+
+.form-section {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #959595;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-section-required {
+    content: "Required";
+}
+
+.form-section-optional {
+    content: "Optional, but recommended";
+}
+
+.full-width {
+    width: 100%;
+}

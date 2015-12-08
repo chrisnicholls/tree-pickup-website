@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+    $("#welcomeModal").modal('show');
+
     $.get("/api/pickupDates", function(data) {
         var select = $("#dateInput")
         $.each(data.dates, function(i, item) {
