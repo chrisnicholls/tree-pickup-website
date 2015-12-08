@@ -2,86 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Christmas Tree Pickup Signup</title>
+    <title>Fredericton ScoutsChristmas Tree Pickup Registration</title>
+
+    <link rel="icon" type="img/ico" href="/assets/images/favicon.ico">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
           integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/assets/css/scouts.css" />
 </head>
 <body>
+<div class="page-header text-center">
+    <div class="container">
+        <h1>Fredericton Scouts Christmas Tree Pickup Registration</h1>
+    </div>
+</div>
 <div class="container">
-    <form id="pickupForm">
-        <div class="form-group">
-            <label for="nameInput">Name</label>
-            <input type="text" class="form-control" id="nameInput" name="name" placeholder="Name">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="/assets/images/scouts-logo-english-web.png" class="img-responsive img-center" alt="Scouts Canada Logo">
         </div>
+        <div class="col-md-8">
 
-        <div class="form-group">
-            <label for="streetNumberInput">Street Number</label>
-            <input type="text" class="form-control" id="streetNumberInput" name="streetNumber" placeholder="Street Number (and unit if necessary)" required>
-        </div>
+            <form id="pickupForm">
+                <div class="form-group">
+                    <label for="nameInput">Name</label>
+                    <input type="text" class="form-control" id="nameInput" name="name" placeholder="Name">
+                </div>
 
-
-        <div class="form-group">
-            <label for="streetNameInput">Civic Address</label>
-            <input type="text" class="form-control" id="streetNameInput" name="streetName" placeholder="Street Name" required>
-        </div>
-
-        <div class="form-group">
-            <label for="phoneInput">Phone Number</label>
-            <input type="tel" class="form-control" id="phoneInput" name="phone" placeholder="(506) 555-1234">
-        </div>
-
-        <div class="form-group">
-            <label for="neighbourhoodSelect">Neighbourhood</label>
-            <select class="form-control" id="neighbourhoodSelect" name="neighbourhood">
-                <option selected>Neighbourhood</option>
-                <option>Brookside</option>
-                <option>Devon</option>
-                <option>Douglas</option>
-                <option>Downtown Fredericton</option>
-                <option>Lincoln</option>
-                <option>Marysville</option>
-                <option>McLeod Hill</option>
-                <option>Nashwaaksis</option>
-                <option>New Maryland</option>
-                <option>Skyline Acres</option>
-                <option>Southwood Park</option>
-                <option>Sunset</option>
-                <option>Uptown Frederiction</option>
-                <option>Woodstock Rd. Area</option>
-                <option>Other</option>
-            </select>
-            <input type="text" name="neighbourhoodOther" id="neighbourhoodOther" style="display:none;">
-        </div>
-
-        <div class="form-group">
-            <label for="dateInput">Pickup Date</label>
-            <select class="form-control" id="dateInput" name="pickupDate" required>
-                <option selected disabled value="">Pickup Date</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="paymentInput">Payment Arrangement</label>
-            <select class="form-control" id="paymentInput" name="payment" required>
-                <option selected disabled value="">Payment Arrangement</option>
-                <option>On tree</option>
-                <option>In Mailbox</option>
-                <option>Come to Door</option>
-                <option>Other</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="otherInput">Other Instructions</label>
-            <input type="text" class="form-control" id="otherInput" name="otherInstructions" placeholder="Other Instructions">
-        </div>
+                <div class="form-group">
+                    <label for="streetNumberInput">Street Number</label>
+                    <input type="text" class="form-control" id="streetNumberInput" name="streetNumber" placeholder="Street Number (and unit if necessary)" required>
+                </div>
 
 
-        <button type="submit" class="btn btn-default" id="submitButton">Submit</button>
-    </form>
+                <div class="form-group">
+                    <label for="streetNameInput">Street Name</label>
+                    <input type="text" class="form-control" id="streetNameInput" name="streetName" placeholder="Street Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneInput">Phone Number</label>
+                    <input type="tel" class="form-control" id="phoneInput" name="phone" placeholder="(506) 555-1234">
+                </div>
+
+                <div class="form-group">
+                    <label for="neighbourhoodSelect">Neighbourhood</label>
+                    <select class="form-control" id="neighbourhoodSelect" name="neighbourhood" required>
+                        <option selected>Neighbourhood</option>
+                        <option>Brookside</option>
+                        <option>Devon</option>
+                        <option>Douglas</option>
+                        <option>Downtown Fredericton</option>
+                        <option>Lincoln</option>
+                        <option>Marysville</option>
+                        <option>McLeod Hill</option>
+                        <option>Nashwaaksis</option>
+                        <option>New Maryland</option>
+                        <option>Skyline Acres</option>
+                        <option>Southwood Park</option>
+                        <option>Sunset</option>
+                        <option>Uptown Frederiction</option>
+                        <option>Woodstock Rd. Area</option>
+                        <option>Other</option>
+                    </select>
+                    <input type="text" name="neighbourhoodOther" id="neighbourhoodOther" style="display:none;">
+                </div>
+
+                <div class="form-group">
+                    <label for="dateInput">Pickup Date</label>
+                    <select class="form-control" id="dateInput" name="pickupDate" required>
+                        <option selected disabled value="">Pickup Date</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentInput">Where can we find your donation?</label>
+                    <select class="form-control" id="paymentInput" name="payment" required>
+                        <option selected disabled value="">Donation Location</option>
+                        <option>On tree</option>
+                        <option>In Mailbox</option>
+                        <option>Come to Door</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="otherInput">Other Instructions</label>
+                    <input type="text" class="form-control" id="otherInput" name="otherInstructions" placeholder="Other Instructions">
+                </div>
+
+
+                <button type="submit" class="btn btn-success" id="submitButton">Submit</button>
+            </form>
+        </div> <!-- /col-md-8 -->
+    </div> <!-- /row -->
 </div>
 
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
