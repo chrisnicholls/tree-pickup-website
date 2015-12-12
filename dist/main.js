@@ -27,10 +27,12 @@ $(document).ready(function() {
             data: $(this).serialize(),
             type: "POST",
             success: function(data) {
-                console.log("success!");
+                $("#theDate").val($("#pickupDate").val()).change();
+                $("#successModal").modal('show');
+                $("#submitButton").prop('disabled', true);
             },
             error: function(data) {
-                console.log("error!");
+                $("#errorModal").modal('show');
             }
         });
 
