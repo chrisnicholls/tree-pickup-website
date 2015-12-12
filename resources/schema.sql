@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS `scouts`.`PickupRecord` ;
+DROP TABLE IF EXISTS `PickupRecord` ;
 
-CREATE TABLE IF NOT EXISTS `scouts`.`PickupRecord` (
+CREATE TABLE IF NOT EXISTS `PickupRecord` (
   `pickupRecordId` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `emailAddress` VARCHAR(45) NULL,
@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS `scouts`.`PickupRecord` (
   PRIMARY KEY (`pickupRecordId`))
 ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS `scouts`.`PickupDate` ;
+DROP TABLE IF EXISTS `PickupDate` ;
 
-CREATE TABLE IF NOT EXISTS `scouts`.`PickupDate` (
+CREATE TABLE IF NOT EXISTS `PickupDate` (
   `pickupDateId` INT NOT NULL AUTO_INCREMENT,
   `pickupDate` VARCHAR(20) NOT NULL,
   `openTime` DATETIME NOT NULL,
