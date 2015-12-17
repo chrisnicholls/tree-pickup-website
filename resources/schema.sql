@@ -27,3 +27,13 @@ ENGINE = InnoDB;
 
 INSERT INTO `PickupDate` (`pickupDateId`,`pickupDate`,`openTime`,`closeTime`) VALUES (1,'January 2, 2016',NOW(),'2016-01-01 22:00:00');
 INSERT INTO `PickupDate` (`pickupDateId`,`pickupDate`,`openTime`,`closeTime`) VALUES (2,'January 9, 2016',NOW(),'2016-01-09 22:00:00');
+
+DROP TABLE IF EXISTS `User`;
+
+CREATE TABLE IF NOT EXISTS `User` (
+  `userId` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(30) NOT NULL,
+  `emailAddress` VARCHAR(30) NOT NULL,
+  `password` VARCHAR(32) NOT NULL,
+  PRIMARY KEY (`userId`))
+ENGINE = InnoDB;
