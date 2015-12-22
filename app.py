@@ -7,7 +7,10 @@ from io import BytesIO
 from functools import wraps, update_wrapper
 from datetime import datetime
 import os
-
+import hashlib
+import base64
+from Crypto import Random
+from Crypto.Cipher import AES
 
 mysql = MySQL()
 app = Flask(__name__, static_url_path='', static_folder='dist')
@@ -48,7 +51,9 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = User.valid_user(request.form['email'], request.form['password'])
+
+        print request.form
+        user = User.valid_user(request.form['email'], request.form['password'], request.form['s'])
         print user
 
         if user is not None:
@@ -184,7 +189,7 @@ class User():
         return user
 
     @classmethod
-    def valid_user(cls, email_address, password):
+    def valid_user(cls, email_address, hashed_password, salt):
         sql = "select userId,password from User where emailAddress=%s"
 
         conn = mysql.connect()
@@ -197,15 +202,51 @@ class User():
 
         for row in cursor.fetchall():
             user_id = row[0]
-            expected_password = row[1]
+            password = AESCipher(app.config['ENCRYPTION_KEY']).decrypt(row[1])
 
-            if password == expected_password:
+            print "decrypted password = %s" % password
+
+            m = hashlib.md5()
+            m.update(password)
+            m.update(salt)
+            expected_hash = m.hexdigest()
+
+            print("hashed_password=%s" % hashed_password)
+            print("expected_hash=  %s" % expected_hash)
+
+            if hashed_password == expected_hash:
                 user = User(user_id)
 
         cursor.close()
         conn.close()
 
         return user
+
+
+class AESCipher(object):
+
+    def __init__(self, key):
+        self.bs = 32
+        self.key = hashlib.sha256(key.encode()).digest()
+
+    def encrypt(self, raw):
+        raw = self._pad(raw)
+        iv = Random.new().read(AES.block_size)
+        cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        return base64.b64encode(iv + cipher.encrypt(raw))
+
+    def decrypt(self, enc):
+        enc = base64.b64decode(enc)
+        iv = enc[:AES.block_size]
+        cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        return self._unpad(cipher.decrypt(enc[AES.block_size:])).decode('utf-8')
+
+    def _pad(self, s):
+        return s + (self.bs - len(s) % self.bs) * chr(self.bs - len(s) % self.bs)
+
+    @staticmethod
+    def _unpad(s):
+        return s[:-ord(s[len(s)-1:])]
 
 if __name__ == "__main__":
     app.run()

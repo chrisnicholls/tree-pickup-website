@@ -38,12 +38,15 @@
 
 <div class="container">
 
-    <form class="form-signin" method="post">
+    <form class="form-signin" method="post" id="loginForm">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <input type="hidden" id="inputS" name="s">
+        <input type="hidden" id="password" name="password">
+
 
         <div class="checkbox">
             <label>
@@ -61,6 +64,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
         crossorigin="anonymous"></script>
+
+<script src="/assets/js/jquery.md5.js"></script>
+<script src="/assets/js/login.js"></script>
 
 </body>
 </html>

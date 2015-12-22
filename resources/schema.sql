@@ -34,6 +34,6 @@ CREATE TABLE IF NOT EXISTS `User` (
   `userId` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(30) NOT NULL,
   `emailAddress` VARCHAR(30) NOT NULL,
-  `password` VARCHAR(32) NOT NULL,
+  `password` VARCHAR(1024) NOT NULL,
   PRIMARY KEY (`userId`))
 ENGINE = InnoDB;
