@@ -1,9 +1,7 @@
 $(document).ready(function() {
 
     if(!document.location.search.match(/sourceKey=callcenter/i)) {
-//        $("#welcomeModal").modal('show');
-        $("#successModal").modal('show');
-
+        $("#welcomeModal").modal('show');
     }
 
     $.get("/api/pickupDates", function(data) {
