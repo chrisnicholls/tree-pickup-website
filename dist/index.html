@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/assets/css/scouts.css"/>
 </head>
 <body>
+
 <div class="page-header text-center">
     <div class="container">
         <h1>Fredericton Scouts Christmas Tree Pickup Registration</h1>
@@ -167,6 +168,10 @@
                 <div class="modal-body">
                     <p>We have recorded your order, we'll come grab your tree on <span id="theDate">the date you selected</span>.</p>
 
+                    <h4>Spread the word!</h4>
+                    <p>We thank you for your support. You can help us out even further by sharing a link to this site.</p>
+                    <div class="fb-share-button" data-href="http://www.scouttreepickup.ca?sourcekey=fb" data-layout="button"></div>
+
                     <div class="row">
                         <div class="pull-right">
                             <img src="assets/images/scouts-logo-notagline-web.png" alt="Scouts Canada Logo"
@@ -215,5 +220,24 @@
         crossorigin="anonymous"></script>
 
 <script src="main.js"></script>
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '887505164698284',
+      xfbml      : true,
+      version    : 'v2.5'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+
 </body>
 </html>
