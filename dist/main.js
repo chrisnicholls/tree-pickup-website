@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-    if(document.location.search.indexOf("sourceKey") == -1) {
+    if(!document.location.search.match(/sourceKey=callcenter/i)) {
         $("#welcomeModal").modal('show');
     }
 
