@@ -4,6 +4,18 @@ $(document).ready(function() {
         $("#welcomeModal").modal('show');
     }
 
+    var source = "Web";
+
+    if(document.location.search.match(/sourceKey=callcenter/i)) {
+        source = "Call Center";
+    }
+
+    if(document.location.search.match(/sourceKey=fb/i)) {
+        source = "Facebook";
+    }
+
+    $("#sourceInput").val(source);
+
     $.get("/api/pickupDates", function(data) {
         var select = $("#dateInput")
         $.each(data.dates, function(i, item) {

@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `PickupRecord` (
   `moneyLocation` VARCHAR(45) NOT NULL,
   `otherInstructions` VARCHAR(100) NULL,
   `dateSubmitted` VARCHAR(45) NOT NULL,
+  `source` VARCHAR(32) NOT NULL DEFAULT 'web',
   PRIMARY KEY (`pickupRecordId`))
 ENGINE = InnoDB;
 
