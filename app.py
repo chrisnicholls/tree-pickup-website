@@ -117,6 +117,7 @@ def get_pickup_dates():
 
     cursor.close()
     conn.commit()
+    conn.close()
 
     return jsonify(d)
 
@@ -125,7 +126,6 @@ def get_pickup_dates():
 @nocache
 @login_required
 def get_pickup_records():
-    # TODO: Authentication!
     query = ('SELECT * FROM PickupRecord')
 
     conn = mysql.connect()
@@ -146,6 +146,53 @@ def get_pickup_records():
     io.seek(0)
 
     return send_file(io, attachment_filename='pickups.xlsx', as_attachment=True)
+
+@app.route('/admin/chartData', methods=['GET'])
+@nocache
+@login_required
+def get_chart_data():
+    query = ('select count(*),source,DATE(dateSubmitted) as d from PickupRecord group by d,source')
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute(query)
+
+    data = {}
+
+    sources = set()
+
+    for row in cursor:
+        date = str(row[2])
+        source = row[1]
+        count = row[0]
+
+        if date not in data:
+            data[date] = {}
+
+        data[date][source] = count
+
+        sources.add(source)
+
+    cursor.close()
+    conn.commit()
+    conn.close()
+
+    options = dict()
+    options['xAxis'] = sorted(data.keys())
+    options['series'] = []
+
+    for source in sources:
+        counts = []
+        for date in options['xAxis']:
+            if source in data[date]:
+                counts.append(data[date][source])
+            else:
+                counts.append(0)
+
+        options['series'].append({'name': source, 'data': counts})
+
+    return jsonify(options)
 
 
 class User():
