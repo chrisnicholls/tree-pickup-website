@@ -151,7 +151,7 @@ def get_pickup_records():
 @nocache
 @login_required
 def get_chart_data():
-    query = ('select count(*),source,DATE(dateSubmitted) as d from PickupRecord group by d,source')
+    query = ("select count(*),source,DATE(CONVERT_TZ(dateSubmitted, 'GMT', '-04:00')) as d from PickupRecord group by d,source")
 
     conn = mysql.connect()
     cursor = conn.cursor()
