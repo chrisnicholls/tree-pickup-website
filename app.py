@@ -1,33 +1,30 @@
 from flask import Flask, request, jsonify, send_file, make_response, redirect, flash
-from flaskext.mysql import MySQL
-from flask.ext.login import LoginManager, login_required, login_user
+from flask_login import LoginManager, login_required, login_user
 import pandas as pd
-import MySQLdb
 from io import BytesIO
 from functools import wraps, update_wrapper
 from datetime import datetime
 import os
-import hashlib
-import base64
-from Crypto import Random
-from Crypto.Cipher import AES
+from models import db, PickupRecord, User, PickupDate
+from sqlalchemy import func, cast, DATE
 
-mysql = MySQL()
 app = Flask(__name__, static_url_path='', static_folder='dist')
-app.config.from_pyfile('config.py')
+app.config.from_object(os.environ['APP_SETTINGS'])
 app.secret_key = os.urandom(24)
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.debug = True
 login_manager = LoginManager()
 
-mysql.init_app(app)
+db.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(int(user_id))
 
 
 def nocache(view):
@@ -51,9 +48,10 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        key = app.config['ENCRYPTION_KEY']
 
         print request.form
-        user = User.valid_user(request.form['email'], request.form['password'], request.form['s'])
+        user = User.valid_user(request.form['email'], request.form['password'], key, request.form['s'])
         print user
 
         if user is not None:
@@ -79,45 +77,35 @@ def hello():
 @app.route('/api/pickup', methods=['POST'])
 def new_record():
     print request.form
-    name = MySQLdb.escape_string(request.form['name'])
-    street_number = MySQLdb.escape_string(request.form['streetNumber'])
-    street_name = MySQLdb.escape_string(request.form['streetName'])
-    phone = MySQLdb.escape_string(request.form['phone'])
-    neighbourhood = MySQLdb.escape_string(request.form['neighbourhood'])
-    pickup_date = MySQLdb.escape_string(request.form['pickupDate'])
-    payment = MySQLdb.escape_string(request.form['payment'])
-    other_instructions = MySQLdb.escape_string(request.form['otherInstructions'])
-    email_address = MySQLdb.escape_string(request.form['email'])
-    source = MySQLdb.escape_string(request.form['source'])
+    name = request.form['name']
+    street_number = request.form['streetNumber']
+    street_name = request.form['streetName']
+    phone = request.form['phone']
+    neighbourhood = request.form['neighbourhood']
+    pickup_date = request.form['pickupDate']
+    payment = request.form['payment']
+    other_instructions = request.form['otherInstructions']
+    email_address = request.form['email']
+    source = request.form['source']
 
-    query = ("INSERT INTO PickupRecord "
-             "(name, streetNumber, streetName, neighbourhood, phoneNumber, pickupDate, moneyLocation, otherInstructions, emailAddress, source, dateSubmitted) "
-             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())")
+    pr = PickupRecord(name, email_address, street_number, street_name, neighbourhood, phone,
+                      pickup_date, payment, other_instructions, datetime.now(), source)
 
-    args = (name, street_number, street_name, neighbourhood, phone, pickup_date, payment, other_instructions, email_address, source)
-
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute(query, args)
-
-    conn.commit()
-    cursor.close()
-    conn.close()
+    db.session.add(pr)
+    db.session.commit()
 
     return "success"
 
 
 @app.route('/api/pickupDates', methods=['GET'])
 def get_pickup_dates():
-    conn = mysql.connect()
-    cursor = conn.cursor()
-    cursor.execute('SELECT pickupDate FROM PickupDate where NOW() > openTime AND NOW() < closeTime')
+    pickup_dates = PickupDate.query.filter(PickupDate.open_time < datetime.now()) \
+        .filter(PickupDate.close_time > datetime.now())
 
-    d = {"dates": list(cursor)}
+    d = {"dates": []}
 
-    cursor.close()
-    conn.commit()
-    conn.close()
+    for pickup_date in pickup_dates:
+        d["dates"].append(pickup_date.date)
 
     return jsonify(d)
 
@@ -126,21 +114,19 @@ def get_pickup_dates():
 @nocache
 @login_required
 def get_pickup_records():
-    query = ('SELECT * FROM PickupRecord')
+    query = PickupRecord.query
 
-    conn = mysql.connect()
-
-    df = pd.read_sql(query, conn)
-
-    conn.close()
+    df = pd.read_sql(query.statement, query.session.bind)
 
     io = BytesIO()
 
     # Use a temp filename to keep pandas happy.
     writer = pd.ExcelWriter(io, engine='openpyxl')
 
+    df = df.drop('pickupRecordId', 1)
+
     # Write the data frame to the StringIO object.
-    df.to_excel(writer, sheet_name='Sheet1')
+    df.to_excel(writer, sheet_name='Sheet1', index=False)
     writer.save()
 
     io.seek(0)
@@ -151,18 +137,16 @@ def get_pickup_records():
 @nocache
 @login_required
 def get_chart_data():
-    query = ("select count(*),source,DATE(CONVERT_TZ(dateSubmitted, 'GMT', '-04:00')) as d from PickupRecord group by d,source")
+    # query = ("select count(*),source,DATE(CONVERT_TZ(dateSubmitted, 'GMT', '-04:00')) as d from PickupRecord group by d,source")
 
-    conn = mysql.connect()
-    cursor = conn.cursor()
-
-    cursor.execute(query)
+    d = cast(PickupRecord.date_submitted, DATE).label('d')
+    counts = db.session.query(func.count('*'), d, PickupRecord.source).select_from(PickupRecord).group_by(d, PickupRecord.source).all()
 
     data = {}
 
     sources = set()
 
-    for row in cursor:
+    for row in counts:
         date = str(row[2])
         source = row[1]
         count = row[0]
@@ -173,10 +157,6 @@ def get_chart_data():
         data[date][source] = count
 
         sources.add(source)
-
-    cursor.close()
-    conn.commit()
-    conn.close()
 
     options = dict()
     options['xAxis'] = sorted(data.keys())
@@ -194,107 +174,6 @@ def get_chart_data():
 
     return jsonify(options)
 
-
-class User():
-    id = None
-
-    def __init__(self, user_id):
-        self.id = user_id
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        try:
-            return unicode(self.id)  # python 2
-        except NameError:
-            return str(self.id)  # python 3
-
-    def __repr__(self):
-        return '<User %r>' % (self.id)
-
-    @classmethod
-    def get(cls, user_id):
-        sql = "select userId from User where userId=%s"
-        conn = mysql.connect()
-        cursor = conn.cursor()
-        cursor.execute(sql, [int(user_id)])
-
-        user = None
-
-        for row in cursor.fetchall():
-            user = User(row[0])
-
-        cursor.close()
-        conn.close()
-
-        return user
-
-    @classmethod
-    def valid_user(cls, email_address, hashed_password, salt):
-        sql = "select userId,password from User where emailAddress=%s"
-
-        conn = mysql.connect()
-        cursor = conn.cursor()
-
-        escaped = MySQLdb.escape_string(email_address)
-        cursor.execute(sql, [escaped])
-
-        user = None
-
-        for row in cursor.fetchall():
-            user_id = row[0]
-            password = AESCipher(app.config['ENCRYPTION_KEY']).decrypt(row[1])
-
-            print "decrypted password = %s" % password
-
-            m = hashlib.md5()
-            m.update(password)
-            m.update(salt)
-            expected_hash = m.hexdigest()
-
-            print("hashed_password=%s" % hashed_password)
-            print("expected_hash=  %s" % expected_hash)
-
-            if hashed_password == expected_hash:
-                user = User(user_id)
-
-        cursor.close()
-        conn.close()
-
-        return user
-
-
-class AESCipher(object):
-
-    def __init__(self, key):
-        self.bs = 32
-        self.key = hashlib.sha256(key.encode()).digest()
-
-    def encrypt(self, raw):
-        raw = self._pad(raw)
-        iv = Random.new().read(AES.block_size)
-        cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        return base64.b64encode(iv + cipher.encrypt(raw))
-
-    def decrypt(self, enc):
-        enc = base64.b64decode(enc)
-        iv = enc[:AES.block_size]
-        cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        return self._unpad(cipher.decrypt(enc[AES.block_size:])).decode('utf-8')
-
-    def _pad(self, s):
-        return s + (self.bs - len(s) % self.bs) * chr(self.bs - len(s) % self.bs)
-
-    @staticmethod
-    def _unpad(s):
-        return s[:-ord(s[len(s)-1:])]
 
 if __name__ == "__main__":
     app.run()
