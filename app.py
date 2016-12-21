@@ -8,6 +8,9 @@ import os
 from models import db, PickupRecord, User, PickupDate
 from sqlalchemy import func, cast, DATE
 
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
 app = Flask(__name__, static_url_path='', static_folder='dist')
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.secret_key = os.urandom(24)
