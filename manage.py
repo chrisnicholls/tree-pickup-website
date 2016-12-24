@@ -6,7 +6,7 @@ from flask_migrate import Migrate, MigrateCommand
 from sqlalchemy import func, cast, DATE
 
 from app import app, db
-from models import PickupDate,User,PickupRecord
+from models import PickupDate,User,PickupRecord,AESCipher
 
 app.config.from_object(os.environ['APP_SETTINGS'])
 
@@ -28,9 +28,16 @@ def seed():
 
 @manager.command
 def seed_users():
+    '''
     u = User('Chris Nicholls', 'chrisjohnnicholls@gmail.com',
              'i2HI5DJJRgvPp8XU3/ZJDdfVtUkJSdZ+MJ7ECeeVlyQAnDNStjsvEhASgNA74ajB')
 
+    db.session.add(u)
+    db.session.commit()
+    '''
+
+    u = User('Doug Prosser', 'doug.prosser@amecfw.com',
+             'VmtMt4oCVrk30brNJqPU5Hqxr1fOgEDFzvb8pqssNKvvd16RqTjvfRhMJI1b6qw5')
     db.session.add(u)
     db.session.commit()
 
@@ -47,6 +54,7 @@ def dates():
 
     print d
 
+
 @manager.command
 def chart():
     d = cast(PickupRecord.date_submitted.astimezone(), DATE).label('d')
@@ -56,6 +64,18 @@ def chart():
     for row in b:
         print type(row)
         print row[1]
+
+
+@manager.command
+def add_user(name, email, password):
+    encrypted_password = AESCipher(app.config['ENCRYPTION_KEY']).encrypt(password)
+
+    print 'name=%s, email=%s, password=%s' %(name, email, encrypted_password)
+
+    u = User(name, email, encrypted_password)
+    db.session.add(u)
+    db.session.commit()
+
 
 if __name__ == '__main__':
     manager.run()
