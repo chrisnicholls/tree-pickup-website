@@ -7,6 +7,9 @@ from datetime import datetime
 import os
 from models import db, PickupRecord, User, PickupDate
 from sqlalchemy import func, cast, DATE
+from sqlalchemy.sql.functions import GenericFunction
+from sqlalchemy.types import DateTime
+import logging
 
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
@@ -23,6 +26,23 @@ login_manager = LoginManager()
 db.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+#log sqlalchemy queries
+# logging.basicConfig()
+# logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
+
+class timezone(GenericFunction):
+    """
+    Sqlalchemy shortcut to SQL convert timezone function
+
+    :param str to_tz: The timezone the datetime will be converted from
+    :param DateTime datetime
+    :returns: Datetime in another timezone
+    :rtype: DateTime or None if timezones are invalid
+
+    """
+    type = DateTime
 
 
 @login_manager.user_loader
@@ -142,7 +162,7 @@ def get_pickup_records():
 def get_chart_data():
     # query = ("select count(*),source,DATE(CONVERT_TZ(dateSubmitted, 'GMT', '-04:00')) as d from PickupRecord group by d,source")
 
-    d = cast(PickupRecord.date_submitted, DATE).label('d')
+    d = cast(func.timezone('AST', PickupRecord.date_submitted), DATE).label('d')
     counts = db.session.query(func.count('*'), PickupRecord.source, d).select_from(PickupRecord).group_by(d, PickupRecord.source).all()
 
     data = {}
