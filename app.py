@@ -143,7 +143,7 @@ def get_chart_data():
     # query = ("select count(*),source,DATE(CONVERT_TZ(dateSubmitted, 'GMT', '-04:00')) as d from PickupRecord group by d,source")
 
     d = cast(PickupRecord.date_submitted, DATE).label('d')
-    counts = db.session.query(func.count('*'), d, PickupRecord.source).select_from(PickupRecord).group_by(d, PickupRecord.source).all()
+    counts = db.session.query(func.count('*'), PickupRecord.source, d).select_from(PickupRecord).group_by(d, PickupRecord.source).all()
 
     data = {}
 
