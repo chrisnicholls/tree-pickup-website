@@ -157,6 +157,9 @@ def get_pickup_records():
     writer = pd.ExcelWriter(io, engine='openpyxl')
 
     df = df.drop('pickupRecordId', 1)
+    df = df.drop('lat', 1)
+    df = df.drop('lng', 1)
+    df = df.drop('geocode_address', 1)
 
     # Write the data frame to the StringIO object.
     df.to_excel(writer, sheet_name='Sheet1', index=False)
