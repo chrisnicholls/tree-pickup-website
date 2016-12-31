@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file, make_response, redirect, flash
+from flask import Flask, request, jsonify, send_file, make_response, redirect, flash, render_template
 from flask_login import LoginManager, login_required, login_user
 import pandas as pd
 from io import BytesIO
@@ -10,6 +10,7 @@ from sqlalchemy import func, cast, DATE
 from sqlalchemy.sql.functions import GenericFunction
 from sqlalchemy.types import DateTime
 import logging
+import googlemaps
 
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
@@ -26,6 +27,8 @@ login_manager = LoginManager()
 db.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+gmaps = googlemaps.Client(key=os.environ['GOOGLE_MAPS_KEY'])
 
 #log sqlalchemy queries
 # logging.basicConfig()
@@ -90,6 +93,13 @@ def login():
 @login_required
 def admin():
     return app.send_static_file('admin/index.html')
+
+
+@app.route('/admin/map')
+@login_required
+def admin_map():
+    print app.config
+    return render_template('admin/map.html', gmaps_key=os.environ['GOOGLE_MAPS_KEY'])
 
 
 @app.route('/api/hello')
@@ -160,8 +170,6 @@ def get_pickup_records():
 @nocache
 @login_required
 def get_chart_data():
-    # query = ("select count(*),source,DATE(CONVERT_TZ(dateSubmitted, 'GMT', '-04:00')) as d from PickupRecord group by d,source")
-
     d = cast(func.timezone('AST', PickupRecord.date_submitted), DATE).label('d')
     counts = db.session.query(func.count('*'), PickupRecord.source, d).select_from(PickupRecord).group_by(d, PickupRecord.source).all()
 
@@ -197,6 +205,50 @@ def get_chart_data():
 
     return jsonify(options)
 
+
+@app.route('/admin/mapData')
+@nocache
+@login_required
+def get_map_data():
+    locations = []
+
+    records = PickupRecord.query.all()
+
+    for r in records:
+        loc = {}
+        loc['address'] = "%s %s" % (r.street_number, r.street_name)
+
+        if r.lat is None or r.lng is None or r.geocode_address is None:
+            r.geocode_address, r.lat, r.lng = geocode(r.street_number, r.street_name)
+            db.session.commit()
+
+        loc['geocodeAddress'] = r.geocode_address
+        loc['lat'] = r.lat
+        loc['lng'] = r.lng
+
+        locations.append(loc)
+
+    return jsonify(locations)
+
+
+def geocode(street_number, street_name):
+    # sometimes we have to try a few
+    addresses = ['%s %s, Fredericton, NB' % (street_number, street_name),
+                 '%s %s, New Brunswick' % (street_number, street_name),
+                 '%s, Fredericton, NB' % street_name]
+
+    for address in addresses:
+        app.logger.debug("Attempting to geocode address: %s" % address)
+        geocode_result = gmaps.geocode('%s, Fredericton, NB' % address)
+        app.logger.info(geocode_result)
+        if len(geocode_result) > 0:
+            lat = geocode_result[0]['geometry']['location']['lat']
+            lng = geocode_result[0]['geometry']['location']['lng']
+            return address, lat, lng
+        else:
+            app.logger.info('Address %s did not return a geocode result' % address)
+
+    return None, None, None
 
 if __name__ == "__main__":
     app.run()

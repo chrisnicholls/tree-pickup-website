@@ -34,9 +34,14 @@ class PickupRecord(db.Model):
     other_instructions = db.Column('otherInstructions', db.String(120))
     date_submitted = db.Column('dateSubmitted', db.DateTime, nullable=False)
     source = db.Column(db.String(32), nullable=False, default='web')
+    lat = db.Column(db.Float, nullable=True)
+    lng = db.Column(db.Float, nullable=True)
+    geocode_address = db.Column(db.String(120), nullable=True)
 
-    def __init__(self, name, email_address, street_number, street_name, neighbourhood, phone_number,
-                 pickup_date, money_location, other_instructions, date_submitted, source):
+
+def __init__(self, name, email_address, street_number, street_name, neighbourhood, phone_number,
+                 pickup_date, money_location, other_instructions, date_submitted, source, lat, lng,
+                 geocode_address):
         self.name = name
         self.email_address = email_address
         self.street_number = street_number
@@ -48,6 +53,9 @@ class PickupRecord(db.Model):
         self.other_instructions = other_instructions
         self.date_submitted = date_submitted
         self.source = source
+        self.lat = lat
+        self.lng = lng
+        self.geocode_address = geocode_address
 
 
 class User(db.Model):

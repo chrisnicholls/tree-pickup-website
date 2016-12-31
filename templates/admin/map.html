@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 500px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div id="map"></div>
+    </div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}"></script>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+crossorigin="anonymous"></script>
+
+<script src="markerclusterer.js"></script>
+
+<script>
+    $(document).ready(function() {
+        var map;
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 45.963585, lng: -66.643119},
+            zoom: 12
+        });
+
+
+        $.get("/admin/mapData", function(locations) {
+            var markers = [];
+            for(var i in locations) {
+                if(locations[i].lat != null) {
+                    var latLng = new google.maps.LatLng(locations[i].lat, locations[i].lng);
+                    var marker = new google.maps.Marker({
+                        position: latLng,
+                        title:locations[i].address
+                    });
+
+                    markers.push(marker);
+                }
+            }
+
+            var mc = new MarkerClusterer(map, markers, {imagePath: '/assets/images/m'});
+        });
+    });
+
+</script>
+</body>
+</html>
