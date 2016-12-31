@@ -83,7 +83,14 @@ Set config vars on heroku
 (scouts)cnicholls@cnicholls-ltm3 tree-pickup-website (master)*$ heroku config:set APP_SETTINGS=config.Config --remote stage
 Setting APP_SETTINGS and restarting ⬢ scouts-tree-pickup-setup... done, v3
 APP_SETTINGS: config.Config
+(scouts)cnicholls@cnicholls-ltm3 tree-pickup-website (master)$ heroku config:set GOOGLE_MAPS_KEY={GMAPKEY} --remote stage
+Setting GOOGLE_MAPS_KEY and restarting ⬢ scouts-tree-pickup-stage... done, v9
+GOOGLE_MAPS_KEY: {GMAPKEY}
 ```
+
+*Note:* the Google Maps key needs to have the following permissions
+* Google Maps JavaScript API
+* Google Maps Geocoding API
 
 Provision a DB (this example uses the free hobby-dev)
 ```bash
