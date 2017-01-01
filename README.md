@@ -86,11 +86,17 @@ APP_SETTINGS: config.Config
 (scouts)cnicholls@cnicholls-ltm3 tree-pickup-website (master)$ heroku config:set GOOGLE_MAPS_KEY={GMAPKEY} --remote stage
 Setting GOOGLE_MAPS_KEY and restarting ⬢ scouts-tree-pickup-stage... done, v9
 GOOGLE_MAPS_KEY: {GMAPKEY}
+(scouts)cnicholls@cnicholls-ltm3 tree-pickup-website (master)*$ heroku config:set SECRET_KEY={key} --remote stage
+Setting SECRET_KEY and restarting ⬢ scouts-tree-pickup-stage... done, v14
+SECRET_KEY: {key}
+
 ```
 
 *Note:* the Google Maps key needs to have the following permissions
 * Google Maps JavaScript API
 * Google Maps Geocoding API
+
+SECRET_KEY is just some random string and used for encrypting session cookies. I generated from http://randomkeygen.com/
 
 Provision a DB (this example uses the free hobby-dev)
 ```bash
