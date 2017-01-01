@@ -98,7 +98,6 @@ def admin():
 @app.route('/admin/map')
 @login_required
 def admin_map():
-    print app.config
     return render_template('admin/map.html', gmaps_key=os.environ['GOOGLE_MAPS_KEY'])
 
 
