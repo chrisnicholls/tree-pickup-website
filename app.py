@@ -17,7 +17,7 @@ load_dotenv(find_dotenv())
 
 app = Flask(__name__, static_url_path='', static_folder='dist')
 app.config.from_object(os.environ['APP_SETTINGS'])
-app.secret_key = os.urandom(24)
+app.secret_key = os.environ['SECRET_KEY']
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
