@@ -38,24 +38,23 @@ class PickupRecord(db.Model):
     lng = db.Column(db.Float, nullable=True)
     geocode_address = db.Column(db.String(120), nullable=True)
 
-
-def __init__(self, name, email_address, street_number, street_name, neighbourhood, phone_number,
-                 pickup_date, money_location, other_instructions, date_submitted, source, lat, lng,
-                 geocode_address):
-        self.name = name
-        self.email_address = email_address
-        self.street_number = street_number
-        self.street_name = street_name
-        self.neighbourhood = neighbourhood
-        self.phone_number = phone_number
-        self.pickup_date = pickup_date
-        self.money_location = money_location
-        self.other_instructions = other_instructions
-        self.date_submitted = date_submitted
-        self.source = source
-        self.lat = lat
-        self.lng = lng
-        self.geocode_address = geocode_address
+    def __init__(self, name, email_address, street_number, street_name, neighbourhood, phone_number,
+                 pickup_date, money_location, other_instructions, date_submitted, source, lat=None,
+                 lng=None, geocode_address=None):
+            self.name = name
+            self.email_address = email_address
+            self.street_number = street_number
+            self.street_name = street_name
+            self.neighbourhood = neighbourhood
+            self.phone_number = phone_number
+            self.pickup_date = pickup_date
+            self.money_location = money_location
+            self.other_instructions = other_instructions
+            self.date_submitted = date_submitted
+            self.source = source
+            self.lat = lat
+            self.lng = lng
+            self.geocode_address = geocode_address
 
 
 class User(db.Model):
