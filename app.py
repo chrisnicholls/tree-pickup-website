@@ -220,7 +220,7 @@ def get_map_data():
         loc = {}
         loc['address'] = "%s %s" % (r.street_number, r.street_name)
 
-        if r.lat is None or r.lng is None or r.geocode_address is None:
+        if r.geocode_address is None:
             r.geocode_address, r.lat, r.lng = geocode(r.street_number, r.street_name)
             db.session.commit()
 
@@ -250,7 +250,7 @@ def geocode(street_number, street_name):
         else:
             app.logger.info('Address %s did not return a geocode result' % address)
 
-    return None, None, None
+    return 'unknown', None, None
 
 if __name__ == "__main__":
     app.run()
