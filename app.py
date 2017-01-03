@@ -212,7 +212,7 @@ def get_chart_data():
 @nocache
 @login_required
 def get_map_data():
-    locations = []
+    locations = {}
 
     records = PickupRecord.query.all()
 
@@ -228,7 +228,7 @@ def get_map_data():
         loc['lat'] = r.lat
         loc['lng'] = r.lng
 
-        locations.append(loc)
+        locations.setdefault(r.pickup_date, []).append(loc)
 
     return jsonify(locations)
 

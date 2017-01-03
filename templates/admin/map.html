@@ -7,8 +7,26 @@
     <style>
         /* Always set the map height explicitly to define the size of the div
          * element that contains the map. */
-        #map {
-            height: 600px;
+        html, body, #map { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+
+        .nicebox {
+            position: absolute;
+            text-align: center;
+            font-family: "Roboto", "Arial", sans-serif;
+            font-size: 13px;
+            z-index: 5;
+            box-shadow: 0 4px 6px -4px #333;
+            padding: 5px 10px;
+            background: rgb(255,255,255);
+            background: linear-gradient(to bottom,rgba(255,255,255,1) 0%,rgba(245,245,245,1) 100%);
+            border: rgb(229, 229, 229) 1px solid;
+        }
+
+        #controls {
+            top: 10px;
+            left: 110px;
+            width: 200px;
+            height: 32px;
         }
     </style>
 
@@ -19,11 +37,13 @@
 
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div id="map"></div>
-    </div>
+<div id="controls" class="nicebox">
+    <select id="dateSelect">
+    </select>
+
 </div>
+<div id="map"></div>
+
 <script src="https://maps.googleapis.com/maps/api/js?key={{ gmaps_key }}"></script>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 
@@ -33,33 +53,7 @@ crossorigin="anonymous"></script>
 
 <script src="markerclusterer.js"></script>
 
-<script>
-    $(document).ready(function() {
-        var map;
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: 45.963585, lng: -66.643119},
-            zoom: 12
-        });
+<script src="map.js"></script>
 
-
-        $.get("/admin/mapData", function(locations) {
-            var markers = [];
-            for(var i in locations) {
-                if(locations[i].lat != null) {
-                    var latLng = new google.maps.LatLng(locations[i].lat, locations[i].lng);
-                    var marker = new google.maps.Marker({
-                        position: latLng,
-                        title:locations[i].address
-                    });
-
-                    markers.push(marker);
-                }
-            }
-
-            var mc = new MarkerClusterer(map, markers, {imagePath: '/assets/images/m'});
-        });
-    });
-
-</script>
 </body>
 </html>
