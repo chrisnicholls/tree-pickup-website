@@ -30,9 +30,9 @@ login_manager.login_view = 'login'
 
 gmaps = googlemaps.Client(key=os.environ['GOOGLE_MAPS_KEY'])
 
-#log sqlalchemy queries
-# logging.basicConfig()
-# logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+# log sqlalchemy queries
+#logging.basicConfig()
+#logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 
 class timezone(GenericFunction):
@@ -154,6 +154,8 @@ def get_pickup_records():
 
     # Use a temp filename to keep pandas happy.
     writer = pd.ExcelWriter(io, engine='openpyxl')
+    
+    df = df.sort('pickupRecordId', ascending=True)
 
     df = df.drop('pickupRecordId', 1)
     df = df.drop('lat', 1)
@@ -172,7 +174,7 @@ def get_pickup_records():
 @nocache
 @login_required
 def get_chart_data():
-    d = cast(func.timezone('AST', PickupRecord.date_submitted), DATE).label('d')
+    d = cast(func.timezone('-04:00', PickupRecord.date_submitted), DATE).label('d')
     counts = db.session.query(func.count('*'), PickupRecord.source, d).select_from(PickupRecord).group_by(d, PickupRecord.source).all()
 
     data = {}
